@@ -1,13 +1,13 @@
 action navigateToFrame(string target_frame) {
 mapping:
-	"trajectoryToFrame" {
+	"/trajectoryToFrame" {
 		frame_id = target_frame
 	}
 }
 
 action playSound(string audio) {
 mapping:
-	"play_audio" {
+	"/play_audio" {
 		audio_file = audio
 	}
 }
@@ -26,7 +26,7 @@ mapping:
 
 action increaseHeight() {
 mapping:
-	"body_pose_service" {
+	"/body_pose_service" {
 		px = 0.0,
 		py = 0.0,
 		pz = 0.2,
@@ -38,7 +38,7 @@ mapping:
 }
 action reduceHeight() {
 mapping:
-	"body_pose_service" {
+	"/body_pose_service" {
 		px = 0.0,
 		py = 0.0,
 		pz = -0.2,
@@ -50,7 +50,7 @@ mapping:
 }
 action normalPose() {
 mapping:
-	"body_pose_service" {
+	"/body_pose_service" {
 		px = 0.0,
 		py = 0.0,
 		pz = 0.0,
@@ -58,6 +58,15 @@ mapping:
 		oy = 0.0,
 		oz = 0.0,
 		ow = 1.0
+	}
+}
+
+action explore() {
+mapping:
+	"/explore_frontier" {
+		robot_frame = "body",
+		odom_frame = "dad_vision",
+		forward = false
 	}
 }
 
@@ -88,7 +97,9 @@ procedure main(){
 	increaseHeight();
 	navigateToFrame("frame2");
 	reduceHeight();
+	end(playSound("Rickroll"));
 	navigateToFrame("frame3");
 	normalPose();
 	navigateToFrame("frame4");
+	explore();
 }

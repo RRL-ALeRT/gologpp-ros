@@ -8,6 +8,7 @@
 #include "gpp_action_examples_interface/srv/print.hpp"
 #include "gpp_action_examples_interface/action/trajectory_to_frame.hpp"
 #include "gpp_action_examples_interface/action/play_audio.hpp"
+#include "gpp_action_examples_interface/action/exploration.hpp"
 
 template<>
 ServiceManager<gpp_action_examples_interface::srv::Print>::RequestT
@@ -30,6 +31,17 @@ ActionManager<gpp_action_examples_interface::action::TrajectoryToFrame>::build_g
 {
 	auto goal = gpp_action_examples_interface::action::TrajectoryToFrame::Goal();
 	goal.frame_id = std::string(a.mapped_arg_value("frame_id"));
+	return goal;
+}
+
+template<>
+ActionManager<gpp_action_examples_interface::action::Exploration>::GoalT
+ActionManager<gpp_action_examples_interface::action::Exploration>::build_goal(const gpp::Activity &a)
+{
+	auto goal = gpp_action_examples_interface::action::Exploration::Goal();
+	goal.robot_frame = std::string(a.mapped_arg_value("robot_frame"));
+	goal.odom_frame = std::string(a.mapped_arg_value("odom_frame"));
+	goal.forward = bool(a.mapped_arg_value("forward"));
 	return goal;
 }
 
@@ -59,8 +71,9 @@ ServiceManager<gpp_action_examples_interface::srv::SpotBodyPose>::build_request(
 
 void RosBackend::define_action_examples_actions()
 {
-	create_ActionManager<gpp_action_examples_interface::action::TrajectoryToFrame>("trajectoryToFrame");
-	create_ActionManager<gpp_action_examples_interface::action::PlayAudio>("play_audio");
+	create_ActionManager<gpp_action_examples_interface::action::TrajectoryToFrame>("/trajectoryToFrame");
+	create_ActionManager<gpp_action_examples_interface::action::PlayAudio>("/play_audio");
+	create_ActionManager<gpp_action_examples_interface::action::Exploration>("/explore_frontier");
 	create_ServiceManager<gpp_action_examples_interface::srv::Print>("/print_string");
-	create_ServiceManager<gpp_action_examples_interface::srv::SpotBodyPose>("body_pose_service");
+	create_ServiceManager<gpp_action_examples_interface::srv::SpotBodyPose>("/body_pose_service");
 }
