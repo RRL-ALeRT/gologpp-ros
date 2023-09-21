@@ -9,6 +9,7 @@
 #include "tf2_ros/transform_listener.h"
 #include "tf2_ros/buffer.h"
 
+#include "spot_msgs/srv/set_locomotion.hpp"
 #include "spot_msgs/action/trajectory.hpp"
 
 #include "geometry_msgs/msg/transform_stamped.hpp"
@@ -21,6 +22,24 @@
 #include "std_srvs/srv/set_bool.hpp"
 
 #include "std_msgs/msg/bool.hpp"
+#include "std_msgs/msg/float64.hpp"
+
+template<>
+ServiceManager<spot_msgs::srv::SetLocomotion>::RequestT
+ServiceManager<spot_msgs::srv::SetLocomotion>::build_request(const gpp::Activity &a)
+{
+  std::unordered_map<std::string, int> gaits;
+  gaits["trot"] = 2;
+  gaits["crawl"] = 4;
+  gaits["amble"] = 5;
+  gaits["jog"] = 7;
+  gaits["hop"] = 8;
+
+  auto request = std::make_shared<spot_msgs::srv::SetLocomotion::Request>();
+
+  request->locomotion_mode = gaits[std::string(a.mapped_arg_value("gait"))];
+  return request;
+}
 
 template<>
 ActionManager<spot_msgs::action::Trajectory>::GoalT
@@ -136,8 +155,19 @@ ExogManager<std_msgs::msg::Bool>::params_to_map(const std_msgs::msg::Bool::Const
 	return params_to_map;
 }
 
+template<>
+std::unordered_map< std::string, gpp::unique_ptr<gpp::Value> >
+ExogManager<std_msgs::msg::Float64>::params_to_map(const std_msgs::msg::Float64::ConstPtr& msg) {
+
+	gpp::unique_ptr<gpp::Value> param (new gpp::Value(gpp::get_type<gpp::NumberType>(), msg->data));
+	std::unordered_map< std::string, gpp::unique_ptr<gpp::Value> > params_to_map;
+	params_to_map.insert({"data", std::move(param)});
+	return params_to_map;
+}
+
 void RosBackend::define_spot_actions()
 {
+  create_ServiceManager<spot_msgs::srv::SetLocomotion>("/locomotion_mode");
   create_ActionManager<spot_msgs::action::Trajectory>("/trajectory");
 
   create_ServiceManager<std_srvs::srv::Trigger>("/claim");
@@ -156,4 +186,5 @@ void RosBackend::define_spot_actions()
 
   create_ExogManger<std_msgs::msg::Bool>("/exog_event_next_TF");
   create_ExogManger<std_msgs::msg::Bool>("/exog_event_next_Lap");
+  create_ExogManger<std_msgs::msg::Float64>("/spot_height");
 }

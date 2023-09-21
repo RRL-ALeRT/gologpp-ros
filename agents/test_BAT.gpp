@@ -70,6 +70,13 @@ mapping:
 	}
 }
 
+// modes_available: trot, crawl, amble, jog, hop
+action spot_gait(string gait_mode) {
+mapping:
+	"/locomotion_mode" {
+		gait = gait_mode
+	}
+}
 // action power_on() {
 // mapping:
 // 	"/power_on" {}
@@ -89,17 +96,36 @@ mapping:
 // mapping:
 // 	"/stand" {}
 // }
-
+action go_to(number px, number py, number pz, number ox, number oy, number oz, number ow) {
+mapping:
+	"/navigate_to_pose" {
+		px = px,
+		py = py,
+		pz = pz,
+		ox = ox,
+		oy = oy,
+		oz = oz,
+		ow = ow
+	}
+}
 
 procedure main(){
-	start(playSound("Rickroll"));
-	navigateToFrame("frame1");
-	increaseHeight();
-	navigateToFrame("frame2");
-	reduceHeight();
-	end(playSound("Rickroll"));
-	navigateToFrame("frame3");
-	normalPose();
-	navigateToFrame("frame4");
-	explore();
+	while (true) {
+		increaseHeight();
+		spot_gait("jog");
+		start(navigateToFrame("frame1"));
+		start(playSound("Rickroll"));
+		end(navigateToFrame("frame1"));
+		reduceHeight();
+		spot_gait("trot");
+		navigateToFrame("frame2");
+		normalPose();
+		end(playSound("Rickroll"));
+		start(playSound("Rickroll"));
+		spot_gait("hop");
+		navigateToFrame("frame3");
+		reduceHeight();
+		spot_gait("trot");
+		navigateToFrame("frame4");
+	}
 }
