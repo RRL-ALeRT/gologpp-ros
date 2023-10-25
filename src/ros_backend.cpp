@@ -59,6 +59,11 @@ RosBackend::RosBackend()
 #ifdef spot_msgs_FOUND
 	define_spot_actions();
 #endif
+
+#ifdef moveit_msgs_FOUND
+	define_moveit_actions();
+#endif
+
 	spin_exog_thread();
 }
 

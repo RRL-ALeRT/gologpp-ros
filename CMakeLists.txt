@@ -28,12 +28,13 @@ find_package(builtin_interfaces REQUIRED)
 pkg_check_modules(readylogpp REQUIRED readylog++)
 pkg_check_modules(parsegologpp REQUIRED parsegolog++)
 
- set(gologpp_action_pkgs
+set(gologpp_action_pkgs
 	turtlesim
 	gpp_action_examples_interface
 	nav2_msgs
 	webots_spot_msgs
 	spot_msgs
+	moveit_msgs
 )
 
 set(found_action_pkgs)
