@@ -20,5 +20,5 @@ ServiceManager<lifecycle_msgs::srv::ChangeState>::build_request(const gpp::Activ
 void RosBackend::define_lifecycle_msgs_actions()
 {
     create_ServiceManager<lifecycle_msgs::srv::ChangeState>("/pose_finder/change_state");
-    create_ServiceManager<lifecycle_msgs::srv::ChangeState>("/single_pose_finder/change_state");
+    create_ServiceManager<lifecycle_msgs::srv::ChangeState>("/find_object_pose/change_state");
 }
