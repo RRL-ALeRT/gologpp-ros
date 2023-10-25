@@ -147,16 +147,6 @@ ServiceManager<std_srvs::srv::SetBool>::build_request(const gpp::Activity &a)
 
 template<>
 std::unordered_map< std::string, gpp::unique_ptr<gpp::Value> >
-ExogManager<std_msgs::msg::Bool>::params_to_map(const std_msgs::msg::Bool::ConstPtr& msg) {
-
-	gpp::unique_ptr<gpp::Value> param (new gpp::Value(gpp::get_type<gpp::BoolType>(), bool(msg->data)));
-	std::unordered_map< std::string, gpp::unique_ptr<gpp::Value> > params_to_map;
-	params_to_map.insert({"data", std::move(param)});
-	return params_to_map;
-}
-
-template<>
-std::unordered_map< std::string, gpp::unique_ptr<gpp::Value> >
 ExogManager<std_msgs::msg::Float64>::params_to_map(const std_msgs::msg::Float64::ConstPtr& msg) {
 
 	gpp::unique_ptr<gpp::Value> param (new gpp::Value(gpp::get_type<gpp::NumberType>(), msg->data));

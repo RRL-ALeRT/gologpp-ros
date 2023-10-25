@@ -36,6 +36,7 @@ set(gologpp_action_pkgs
 	spot_msgs
 	lifecycle_msgs
 	alert_auto_dexterity
+	moveit_msgs
 )
 
 set(found_action_pkgs)
