@@ -59,6 +59,15 @@ RosBackend::RosBackend()
 #ifdef spot_msgs_FOUND
 	define_spot_actions();
 #endif
+
+#ifdef lifecycle_msgs_FOUND
+	define_lifecycle_msgs_actions();
+#endif
+
+#ifdef alert_auto_dexterity_FOUND
+	define_alert_auto_dexterity_actions();
+#endif
+
 	spin_exog_thread();
 }
 

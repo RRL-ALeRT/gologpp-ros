@@ -34,6 +34,8 @@ set(gologpp_action_pkgs
 	nav2_msgs
 	webots_spot_msgs
 	spot_msgs
+	lifecycle_msgs
+	alert_auto_dexterity
 )
 
 set(found_action_pkgs)
