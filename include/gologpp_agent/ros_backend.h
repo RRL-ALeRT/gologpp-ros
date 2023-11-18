@@ -47,6 +47,21 @@ class Singleton {
   Singleton() {}
 };
 
+template <typename T>
+class GppBoard {
+ public:
+  GppBoard(const GppBoard&) = delete;
+  GppBoard& operator=(const GppBoard&) = delete;
+
+  static std::unordered_map<std::string, T>& board() {
+    static std::unordered_map<std::string, T> gpp_board;
+    return gpp_board;
+  }
+
+ private:
+  GppBoard() {}
+};
+
 class RosBackend : public gologpp::PlatformBackend {
  private:
   using string = gologpp::string;

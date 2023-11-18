@@ -8,6 +8,9 @@
 #include "gpp_action_examples_interface/action/trajectory_to_frame.hpp"
 #include "gpp_action_examples_interface/srv/print.hpp"
 #include "gpp_action_examples_interface/srv/spot_body_pose.hpp"
+#include "gpp_action_examples_interface/srv/turtle_pose.hpp"
+
+#include "turtlesim/msg/pose.hpp"
 
 template <>
 ServiceManager<gpp_action_examples_interface::srv::Print>::RequestT
@@ -61,6 +64,24 @@ ServiceManager<gpp_action_examples_interface::srv::SpotBodyPose>::build_request(
   return request;
 }
 
+template <>
+ServiceManager<gpp_action_examples_interface::srv::TurtlePose>::RequestT
+ServiceManager<gpp_action_examples_interface::srv::TurtlePose>::build_request(const gpp::Activity& a) {
+  auto request = std::make_shared<gpp_action_examples_interface::srv::TurtlePose::Request>();
+  request->turtle_name = std::string(a.mapped_arg_value("name"));
+  board_var_name = std::string(a.mapped_arg_value("board_var_name"));
+  return request;
+}
+
+template <>
+gpp::optional<gpp::Value> ServiceManager<gpp_action_examples_interface::srv::TurtlePose>::to_golog_constant(
+    ResponseT result) {
+  auto& board = GppBoard<std::shared_ptr<turtlesim::msg::Pose>>::board();
+  board[board_var_name] = std::make_shared<turtlesim::msg::Pose>(result.get()->pose);
+
+  return gpp::Value(gpp::get_type<gpp::StringType>(), board_var_name);
+}
+
 void RosBackend::define_gpp_action_examples_interface_actions() {
   built_interface_names.push_back("gpp_action_examples");
 
@@ -69,4 +90,5 @@ void RosBackend::define_gpp_action_examples_interface_actions() {
   create_ActionManager<gpp_action_examples_interface::action::PlayAudio>("play_audio");
   create_ServiceManager<gpp_action_examples_interface::srv::Print>("/print_string");
   create_ServiceManager<gpp_action_examples_interface::srv::SpotBodyPose>("body_pose_service");
+  create_ServiceManager<gpp_action_examples_interface::srv::TurtlePose>("/get_turtle_pose");
 }

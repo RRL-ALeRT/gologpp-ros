@@ -92,6 +92,8 @@ class ServiceManager : public AbstractActionManager {
   Client service_client_;
   RequestT current_request_;
   ResponseT current_response_;
+
+  std::string board_var_name;
 };
 
 template <class ServiceT>

@@ -5,6 +5,8 @@
 #include "gologpp_agent/ros_backend.h"
 #include "std_msgs/msg/bool.hpp"
 #include "turtlesim/action/rotate_absolute.hpp"
+#include "turtlesim/msg/pose.hpp"
+#include "turtlesim/srv/kill.hpp"
 #include "turtlesim/srv/spawn.hpp"
 
 template <>
@@ -35,9 +37,18 @@ template <>
 ServiceManager<turtlesim::srv::Spawn>::RequestT ServiceManager<turtlesim::srv::Spawn>::build_request(
     const gpp::Activity& a) {
   auto request = std::make_shared<turtlesim::srv::Spawn::Request>();
-  request->x = a.mapped_arg_value("x").numeric_convert<float>();
-  request->y = a.mapped_arg_value("y").numeric_convert<float>();
-  request->theta = a.mapped_arg_value("theta").numeric_convert<float>();
+
+  auto name = std::string(a.mapped_arg_value("name"));
+  board_var_name = std::string(a.mapped_arg_value("board_var_name"));
+
+  auto& board = GppBoard<std::shared_ptr<turtlesim::msg::Pose>>::board();
+  auto pose = board[board_var_name];
+
+  request->name = name;
+  request->x = pose->x;
+  request->y = pose->y;
+  request->theta = pose->theta;
+
   return request;
 }
 
@@ -46,11 +57,22 @@ gpp::optional<gpp::Value> ServiceManager<turtlesim::srv::Spawn>::to_golog_consta
   return gpp::Value(gpp::get_type<gpp::StringType>(), result.get()->name);
 }
 
+template <>
+ServiceManager<turtlesim::srv::Kill>::RequestT ServiceManager<turtlesim::srv::Kill>::build_request(
+    const gpp::Activity& a) {
+  auto request = std::make_shared<turtlesim::srv::Kill::Request>();
+
+  request->name = std::string(a.mapped_arg_value("name"));
+
+  return request;
+}
+
 void RosBackend::define_turtlesim_actions() {
   built_interface_names.push_back("turtlesim");
 
   create_ActionManager<turtlesim::action::RotateAbsolute>("/turtle1/rotate_absolute");
 
+  create_ServiceManager<turtlesim::srv::Kill>("/kill");
   create_ServiceManager<turtlesim::srv::Spawn>("/spawn");
 
   create_ExogManger<std_msgs::msg::Bool>("/exog_event");

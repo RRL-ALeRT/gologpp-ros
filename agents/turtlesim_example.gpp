@@ -36,7 +36,7 @@ initially:
     () = "";
 }
 
-string exog_function sense_result(string ros_action_name);
+string exog_function sense_string(string ros_action_name);
 
 number exog_function sense_number(string ros_action_name);
 
@@ -49,14 +49,20 @@ mapping:
     }
 }
 
-action spawn_turtle(number x, number y, number theta) {
+action spawn_turtle(string name, string board_var_name) {
 senses:
-    string_response() = sense_result("/spawn");
+    string_response() = sense_string("/spawn");
 mapping:
     "/spawn" {
-        x = x,
-        y = y,
-        theta = theta
+        name = name,
+        board_var_name = board_var_name
+    }
+}
+
+action kill_turtle(string name) {
+mapping:
+    "/kill" {
+        name = name
     }
 }
 
@@ -67,8 +73,46 @@ mapping:
     }
 }
 
-
-procedure main(){
-    move_circle(10.0);
-    test(exog_state());
+string fluent pose() {
+initially:
+    () = "";
 }
+
+action get_pose(string name, string board_var_name) {
+mapping:
+    "/get_turtle_pose" {
+        name = name,
+        board_var_name = board_var_name
+    }
+}
+
+string fluent turtle1_pose() {
+initially:
+    () = "";
+}
+
+procedure main() {
+    move_circle(4);
+
+    test(exog_state());
+    exog_state() = false;
+
+    get_pose("turtle1", "{turtle1_pose}");
+    kill_turtle("turtle1");
+    spawn_turtle("turtle2", "{turtle1_pose}");
+
+    test(exog_state());
+
+    get_pose("turtle2", "{turtle2_pose}");
+    kill_turtle("turtle2");
+    spawn_turtle("turtle1", "{turtle2_pose}");
+    move_circle(4);
+}
+
+/*
+ros2 run turtlesim turtlesim_node
+ros2 run gpp_action_examples move_circle_as.py
+ros2 run gpp_action_examples turtle_pose_service.py
+ros2 run gologpp_agent gologpp_agent
+exog
+*/
