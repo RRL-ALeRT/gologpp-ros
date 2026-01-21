@@ -86,6 +86,7 @@ private:
 	void define_webots_spot_msgs_actions();
 	void define_nav2_msgs_actions();
 	void define_spot_msgs_actions();
+	void define_moveit_msgs_actions();
 
 	template<class ActionT>
 	void create_ActionManager(const std::string &name);

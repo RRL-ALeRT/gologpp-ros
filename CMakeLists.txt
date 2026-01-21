@@ -38,11 +38,12 @@ pkg_check_modules(parsegologpp REQUIRED parsegolog++)
 	nav2_msgs
 	webots_spot_msgs
 	spot_msgs
+	moveit_msgs
 )
 
 set(found_action_pkgs)
 foreach(pkg ${gologpp_action_pkgs})
-	find_package(${pkg})
+	find_package(${pkg} REQUIRED)
 	if ("${${pkg}_FOUND}")
 		list(APPEND found_action_pkgs ${pkg})
 	endif()

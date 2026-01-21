@@ -73,8 +73,8 @@ void RosBackend::define_gpp_action_examples_interface_actions()
 	built_interface_names.push_back("gpp_action_examples");
 
 	create_ActionManager<gpp_action_examples_interface::action::Durative>("move_circle");
-	create_ActionManager<gpp_action_examples_interface::action::TrajectoryToFrame>("trajectoryToFrame");
+	create_ActionManager<gpp_action_examples_interface::action::TrajectoryToFrame>("/trajectoryToFrame");
 	create_ActionManager<gpp_action_examples_interface::action::PlayAudio>("play_audio");
 	create_ServiceManager<gpp_action_examples_interface::srv::Print>("/print_string");
-	create_ServiceManager<gpp_action_examples_interface::srv::SpotBodyPose>("body_pose_service");
+	create_ServiceManager<gpp_action_examples_interface::srv::SpotBodyPose>("/body_pose_service");
 }

@@ -18,6 +18,7 @@
 #include "builtin_interfaces/msg/time.hpp"
 
 #include "std_msgs/msg/bool.hpp"
+#include "std_msgs/msg/float64.hpp"
 #include "std_srvs/srv/trigger.hpp"
 #include "std_srvs/srv/set_bool.hpp"
 
@@ -125,6 +126,16 @@ ServiceManager<std_srvs::srv::SetBool>::build_request(const gpp::Activity &a)
   return request;
 }
 
+template<>
+std::unordered_map< std::string, gpp::unique_ptr<gpp::Value> >
+ExogManager<std_msgs::msg::Float64>::params_to_map(const std_msgs::msg::Float64::ConstPtr& msg) {
+
+	gpp::unique_ptr<gpp::Value> param (new gpp::Value(gpp::get_type<gpp::NumberType>(), msg->data));
+	std::unordered_map< std::string, gpp::unique_ptr<gpp::Value> > params_to_map;
+	params_to_map.insert({"data", std::move(param)});
+	return params_to_map;
+}
+
 void RosBackend::define_spot_msgs_actions()
 {
 	built_interface_names.push_back("spot_msgs");
@@ -147,4 +158,6 @@ void RosBackend::define_spot_msgs_actions()
 
   create_ExogManger<std_msgs::msg::Bool>("/exog_event_next_TF");
   create_ExogManger<std_msgs::msg::Bool>("/exog_event_next_Lap");
+
+	create_ExogManger<std_msgs::msg::Float64>("/spot_height");
 }

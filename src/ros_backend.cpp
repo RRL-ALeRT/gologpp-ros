@@ -52,12 +52,16 @@ RosBackend::RosBackend()
 	define_spot_msgs_actions();
 #endif
 
+#ifdef moveit_msgs_FOUND
+	define_moveit_msgs_actions();
+#endif
+
 	std::string built_interfaces_string = "";
 	for (auto& name: built_interface_names)
 	{
 		built_interfaces_string += name + " ";
 	}
-	RCLCPP_INFO_STREAM(LOGGER, "Managers from " << built_interfaces_string << "are available");
+	RCLCPP_WARN_STREAM(LOGGER, "Managers from " << built_interfaces_string << "are available");
 	spin_exog_thread();
 }
 

@@ -124,10 +124,11 @@ void ServiceManager<ServiceT>::execute_current_activity() {
 			RCLCPP_ERROR(LOGGER, "Interrupted while waiting for the service. Exiting.");
 			return;
 		}
-		RCLCPP_WARN_STREAM(LOGGER, "Service " << std::string(current_activity_->mapped_name()) << " not available, waiting again...");
+		RCLCPP_INFO_STREAM(LOGGER, "Service " << std::string(current_activity_->mapped_name()) << " not available, waiting again...");
 	}
 
 	auto response_received_callback = [this](ResponseT future_response_) {
+		RCLCPP_INFO_STREAM(LOGGER, std::string(current_activity_->mapped_name()) << " response received");
         if (future_response_.valid()) {
 			current_activity_->update(gpp::Transition::Hook::FINISH);
 			set_result(to_golog_constant(future_response_));
@@ -138,6 +139,7 @@ void ServiceManager<ServiceT>::execute_current_activity() {
 		}
 	};
 	auto future_result = service_client_->async_send_request(current_request_, response_received_callback);
+	RCLCPP_INFO_STREAM(LOGGER, std::string(current_activity_->mapped_name()) << " request sent");
 }
 
 
@@ -168,15 +170,17 @@ void ActionManager<ActionT>::execute_current_activity()
 			RCLCPP_ERROR(LOGGER, "Interrupted while waiting for the action. Exiting.");
 			return;
 		}
-		RCLCPP_WARN_STREAM(LOGGER, "Action " << std::string(current_activity_->mapped_name()) << " not available, waiting again");
+		RCLCPP_INFO_STREAM(LOGGER, "Action " << std::string(current_activity_->mapped_name()) << " not available, waiting again");
 	}
 
 	action_client_->async_send_goal(current_goal_, send_goal_options);
+	RCLCPP_INFO_STREAM(LOGGER, std::string(current_activity_->mapped_name()) << " goal sent");
 }
 
 
 template<class ActionT>
 void ActionManager<ActionT>::result_callback(const typename ResultT::WrappedResult &result) {
+	RCLCPP_INFO_STREAM(LOGGER, std::string(current_activity_->mapped_name()) << " result received");
 	switch(result.code) {
 	case rclcpp_action::ResultCode::SUCCEEDED:
 		current_activity_->update(gpp::Transition::Hook::FINISH);
@@ -184,10 +188,12 @@ void ActionManager<ActionT>::result_callback(const typename ResultT::WrappedResu
 		break;
 	case rclcpp_action::ResultCode::ABORTED:
 		current_activity_->update(gpp::Transition::Hook::FAIL);
+		RCLCPP_ERROR(LOGGER, "FAILED");
 		set_result(to_golog_constant(result));
 		break;
 	case rclcpp_action::ResultCode::CANCELED:
 		current_activity_->update(gpp::Transition::Hook::FAIL);
+		RCLCPP_ERROR(LOGGER, "FAILED");
 		set_result(to_golog_constant(result));
 		break;
 	default:
